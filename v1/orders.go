@@ -75,7 +75,7 @@ func (s *OrderService) CancelAll() error {
 }
 
 // Create a new order.
-func (s *OrderService) Create(symbol string, amount float64, price float64, orderType string) (*Order, error) {
+func (s *OrderService) Create(symbol string, amount float64, price float64, orderType string, postOnly bool) (*Order, error) {
 	var side string
 	if amount < 0 {
 		amount = math.Abs(amount)
@@ -85,12 +85,13 @@ func (s *OrderService) Create(symbol string, amount float64, price float64, orde
 	}
 
 	payload := map[string]interface{}{
-		"symbol":   symbol,
-		"amount":   strconv.FormatFloat(amount, 'f', -1, 32),
-		"price":    strconv.FormatFloat(price, 'f', -1, 32),
-		"side":     side,
-		"type":     orderType,
-		"exchange": "bitfinex",
+		"symbol":      symbol,
+		"amount":      strconv.FormatFloat(amount, 'f', -1, 32),
+		"price":       strconv.FormatFloat(price, 'f', -1, 32),
+		"side":        side,
+		"type":        orderType,
+		"is_postonly": postOnly,
+		"exchange":    "bitfinex",
 	}
 
 	req, err := s.client.newAuthenticatedRequest("POST", "order/new", payload)
